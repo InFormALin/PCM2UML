@@ -9,3 +9,4 @@ A simple project that helps you converting PCM Models to UML (Papyrus) Models
   
 3. Import this project into eclipse
 4. Create a launch configuration that looks similar to that ..
+![image](https://user-images.githubusercontent.com/22198798/139250157-0f3ad244-744e-43d2-b5ca-0151bf63b7c0.png)
