@@ -43,9 +43,9 @@ mapping OperationRequiredRole :: OpRequiredRole2Usage(client: uml::NamedElement)
 }
 
 mapping repository::Interface :: Interface2Interface() : uml::Interface disjuncts 
-	OperationInterface::Interface2OpInterface;
+	OperationInterface::OpInterface2Interface;
 
-mapping pcm::repository::OperationInterface :: Interface2OpInterface() : uml::Interface {
+mapping pcm::repository::OperationInterface :: OpInterface2Interface() : uml::Interface {
 	name := self.entityName;
 	ownedOperation += self.signatures__OperationInterface.map OperationSignature2Operation();
 }
