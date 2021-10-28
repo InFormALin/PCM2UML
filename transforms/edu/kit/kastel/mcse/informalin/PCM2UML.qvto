@@ -1,0 +1,56 @@
+modeltype pcm uses "http://palladiosimulator.org/PalladioComponentModel/5.2";
+modeltype repository uses pcm::repository("http://palladiosimulator.org/PalladioComponentModel/5.2");
+
+modeltype uml uses "http://www.eclipse.org/uml2/5.0.0/UML";
+
+transformation PCM2UML(in source : pcm, out target : uml);
+
+main() {
+	var repos = source.rootObjects()[pcm::repository::Repository];
+	repos->map Repository2Model();
+}
+
+mapping repository::Repository :: Repository2Model() : uml::Model {
+	result.name := self.entityName;
+	result.packagedElement += self.interfaces__Repository.map Interface2Interface();
+	result.packagedElement +=self.components__Repository.map Component2Component();
+}
+
+mapping RepositoryComponent :: Component2Component() : uml::Component 
+	disjuncts BasicComponent::BasicComponent2Component;
+
+mapping BasicComponent :: BasicComponent2Component() : uml::Component  {
+	name := self.entityName;
+	interfaceRealization += self.providedRoles_InterfaceProvidingEntity.map ProvidedRole2InterfaceRealization(result);
+	packagedElement += self.requiredRoles_InterfaceRequiringEntity.map RequiredRole2Usage(result);
+}
+
+mapping ProvidedRole :: ProvidedRole2InterfaceRealization(client: uml::NamedElement) : uml::InterfaceRealization
+	disjuncts OperationProvidedRole::OpProvidedRole2InterfaceRealization;
+
+mapping OperationProvidedRole :: OpProvidedRole2InterfaceRealization(client: uml::NamedElement) : uml::InterfaceRealization{
+	result.client := client;
+	result.contract := self.providedInterface__OperationProvidedRole.map Interface2Interface();
+	result.supplier := self.providedInterface__OperationProvidedRole.map Interface2Interface();
+}
+
+mapping RequiredRole :: RequiredRole2Usage(client: uml::NamedElement) : uml::Usage
+	disjuncts OperationRequiredRole::OpRequiredRole2Usage;
+
+mapping OperationRequiredRole :: OpRequiredRole2Usage(client: uml::NamedElement) : uml::Usage{
+	result.client := client;
+	result.supplier := self.requiredInterface__OperationRequiredRole.map Interface2Interface();
+}
+
+mapping repository::Interface :: Interface2Interface() : uml::Interface disjuncts 
+	OperationInterface::Interface2OpInterface;
+
+mapping pcm::repository::OperationInterface :: Interface2OpInterface() : uml::Interface {
+	name := self.entityName;
+	ownedOperation += self.signatures__OperationInterface.map OperationSignature2Operation();
+}
+
+mapping OperationSignature :: OperationSignature2Operation() : Operation  {
+	// Currently we assume that there are no parameters ..
+	name := self.entityName;
+}
