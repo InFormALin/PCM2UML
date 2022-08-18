@@ -11,7 +11,7 @@ main() {
 }
 
 mapping repository::Repository :: Repository2Model() : uml::Model {
-	result.name := self.entityName;
+	result.name := self.entityName + "[" + self.id + "]";
 	result.packagedElement += self.interfaces__Repository.map Interface2Interface();
 	result.packagedElement +=self.components__Repository.map Component2Component();
 }
@@ -20,7 +20,7 @@ mapping RepositoryComponent :: Component2Component() : uml::Component
 	disjuncts BasicComponent::BasicComponent2Component;
 
 mapping BasicComponent :: BasicComponent2Component() : uml::Component  {
-	result.name := self.entityName;
+	result.name := self.entityName + "[" + self.id + "]";
 	result.interfaceRealization += self.providedRoles_InterfaceProvidingEntity.map ProvidedRole2InterfaceRealization(result);
 	result.packagedElement += self.requiredRoles_InterfaceRequiringEntity.map RequiredRole2Usage(result);
 }
@@ -46,11 +46,11 @@ mapping repository::Interface :: Interface2Interface() : uml::Interface disjunct
 	OperationInterface::OpInterface2Interface;
 
 mapping pcm::repository::OperationInterface :: OpInterface2Interface() : uml::Interface {
-	result.name := self.entityName;
+	result.name := self.entityName + "[" + self.id + "]";
 	result.ownedOperation += self.signatures__OperationInterface.map OperationSignature2Operation();
 }
 
 mapping OperationSignature :: OperationSignature2Operation() : Operation  {
 	// Currently we assume that there are no parameters ..
-	result.name := self.entityName;
+	result.name := self.entityName + "[" + self.id + "]";
 }
